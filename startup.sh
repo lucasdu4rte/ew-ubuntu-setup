@@ -1,3 +1,5 @@
+# Setup Kubuntu Enviroment
+
 sudo apt-get update
 
 echo 'installing curl' 
@@ -25,6 +27,9 @@ if echo "$git_core_editor_to_vim" | grep -iq "^y" ;then
 else
 	echo "Okay, no problem. :) Let's move on!"
 fi
+
+echo 'installing git-flow' 
+sudo apt-get install git-flow
 
 echo "Generating a SSH Key"
 ssh-keygen -t rsa -b 4096 -C $git_config_user_email
@@ -59,18 +64,7 @@ sudo apt-get update
 sudo apt-get install code -y # or code-insiders
 
 echo 'installing extensions'
-code --install-extension dbaeumer.vscode-eslint
-code --install-extension christian-kohler.path-intellisense
-code --install-extension dbaeumer.vscode-eslint
-code --install-extension dracula-theme.theme-dracula
-code --install-extension esbenp.prettier-vscode
-code --install-extension foxundermoon.shell-format
-code --install-extension pmneo.tsimporter
-code --install-extension waderyan.gitblame
-code --install-extension yzhang.markdown-all-in-one
-
-echo 'installing spotify' 
-snap install spotify
+code --install-extension shan.code-settings-sync
 
 echo 'installing chrome' 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -90,10 +84,16 @@ export NVM_DIR="$HOME/.nvm"
 
 source ~/.zshrc
 nvm --version
-nvm install 12
-nvm alias default 12
+nvm install 14
+nvm alias default 14
 node --version
 npm --version
+
+echo "installing yarn"
+npm install -g yarn
+
+echo "installing oh-my-zsh"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 echo 'installing autosuggestions' 
 git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
@@ -102,67 +102,52 @@ source ~/.zshrc
 
 echo 'installing theme'
 sudo apt install fonts-firacode -y
-wget -O ~/.oh-my-zsh/themes/node.zsh-theme https://raw.githubusercontent.com/skuridin/oh-my-zsh-node-theme/master/node.zsh-theme 
-sed -i 's/.*ZSH_THEME=.*/ZSH_THEME="node"/g' ~/.zshrc
+# wget -O ~/.oh-my-zsh/themes/node.zsh-theme https://raw.githubusercontent.com/skuridin/oh-my-zsh-node-theme/master/node.zsh-theme 
+# sed -i 's/.*ZSH_THEME=.*/ZSH_THEME="node"/g' ~/.zshrc
+git clone https://github.com/dracula/konsole.git dracula-console
+cp dracula-console/Dracula.colorscheme ~/.local/share/konsole/
+
+echo 'after install change in Konsole settings to dracula'
+
+echo 'continue installing theme...'
+git clone https://github.com/denysdovhan/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt"
+ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+sed -i 's/.*ZSH_THEME=.*/ZSH_THEME="spaceship"/g' ~/.zshrc
+
+echo "
+SPACESHIP_PROMPT_ORDER=(
+  user          # Username section
+  dir           # Current directory section
+  host          # Hostname section
+  git           # Git section (git_branch + git_status)
+  hg            # Mercurial section (hg_branch  + hg_status)
+  exec_time     # Execution time
+  line_sep      # Line break
+  vi_mode       # Vi-mode indicator
+  jobs          # Background jobs indicator
+  exit_code     # Exit code section
+  char          # Prompt character
+)
+SPACESHIP_USER_SHOW=always
+SPACESHIP_PROMPT_ADD_NEWLINE=false
+SPACESHIP_CHAR_SYMBOL="❯"
+SPACESHIP_CHAR_SUFFIX=" "
+" >> ~/.zshrc
+
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
+
+echo "
+
+zinit light zdharma/fast-syntax-highlighting
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
+
+" >> ~/.zshrc
 
 echo 'installing meet franz' 
 wget https://github.com/meetfranz/franz/releases/download/v5.1.0/franz_5.1.0_amd64.deb -O franz.deb
 sudo dpkg -i franz.debchristian-kohler.path-intellisense
 sudo apt-get install -y -f 
-
-echo 'installing slack' 
-wget https://downloads.slack-edge.com/linux_releases/slack-desktop-3.3.8-amd64.deb
-sudo apt install ./slack-desktop-*.deb -y
-
-echo 'installing terminator'
-sudo apt-get update
-sudo apt-get install terminator -y
-
-echo 'adding dracula theme' 
-cat <<EOF >  ~/.config/terminator/config
-[global_config]
-  title_transmit_bg_color = "#ad7fa8"
-[keybindings]
-  close_term = <Primary>w
-  close_window = <Primary>q
-  new_tab = <Primary>t
-  new_window = <Primary>i
-  paste = <Primary>v
-  split_horiz = <Primary>e
-  split_vert = <Primary>d
-  switch_to_tab_1 = <Primary>1
-  switch_to_tab_10 = <Primary>0
-  switch_to_tab_2 = <Primary>2
-  switch_to_tab_3 = <Primary>3
-  switch_to_tab_4 = <Primary>4
-  switch_to_tab_5 = <Primary>5
-  switch_to_tab_6 = <Primary>6
-[layouts]
-  [[default]]
-    [[[child1]]]
-      parent = window0
-      type = Terminal
-    [[[window0]]]
-      parent = ""
-      type = Window
-[plugins]
-[profiles]
-  [[default]]
-    cursor_color = "#aaaaaa"
-EOF
-
-
-cat <<EOF >>  ~/.config/terminator/config
-[[Dracula]]
-    background_color = "#1e1f29"
-    background_darkness = 0.88
-    background_type = transparent
-    copy_on_selection = True
-    cursor_color = "#bbbbbb"
-    foreground_color = "#f8f8f2"
-    palette = "#000000:#ff5555:#50fa7b:#f1fa8c:#bd93f9:#ff79c6:#8be9fd:#bbbbbb:#555555:#ff5555:#50fa7b:#f1fa8c:#bd93f9:#ff79c6:#8be9fd:#ffffff"
-    scrollback_infinite = True
-EOF
 
 echo 'installing docker' 
 sudo apt-get remove docker docker-engine docker.io
@@ -175,37 +160,34 @@ chmod 777 /var/run/docker.sock
 docker run hello-world
 
 echo 'installing docker-compose' 
-sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
-
-echo 'installing aws-cli' 
-sudo apt-get install awscli -y
-aws --version
-curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
-sudo dpkg -i session-manager-plugin.deb
-session-manager-plugin --version
-
-echo 'installing teamviewer'
-wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
-sudo apt install -y ./teamviewer_amd64.deb
-
-echo 'installing vnc-viewer'
-sudo apt-get install -y --no-install-recommends ubuntu-desktop gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
-sudo apt-get install vnc4server -y 
 
 echo 'installing fzf'
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install --all
 
-echo 'installing brave'
-curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | sudo apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
-source /etc/os-release
-echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ $UBUNTU_CODENAME main" | sudo tee /etc/apt/sources.list.d/brave-browser-release-${UBUNTU_CODENAME}.list
-sudo apt update
-sudo apt install brave-keyring brave-browser
-
 echo 'installing dbeaver'
 wget -c https://dbeaver.io/files/6.0.0/dbeaver-ce_6.0.0_amd64.deb
 sudo dpkg -i dbeaver-ce_6.0.0_amd64.deb
 sudo apt-get install -f
+
+echo 'installing github-desktop'
+wget -qO - https://packagecloud.io/shiftkey/desktop/gpgkey | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] https://packagecloud.io/shiftkey/desktop/any/ any main" > /etc/apt/sources.list.d/packagecloud-shiftky-desktop.list'
+sudo apt-get update
+sudo apt install github-desktop
+
+echo 'installing insomnia'
+sudo snap install insomnia
+
+echo 'installing deezer-unofficial-player'
+sudo snap install deezer-unofficial-player
+
+echo 'installing kitematic'
+sudo snap install kitematic
+
+echo 'installing postman'
+sudo snap install postman
+
