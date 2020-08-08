@@ -169,8 +169,8 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 ~/.fzf/install --all
 
 echo 'installing dbeaver'
-wget -c https://dbeaver.io/files/6.0.0/dbeaver-ce_6.0.0_amd64.deb
-sudo dpkg -i dbeaver-ce_6.0.0_amd64.deb
+wget -c https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb
+sudo dpkg -i dbeaver-ce_latest_amd64.deb
 sudo apt-get install -f
 
 echo 'installing github-desktop'
@@ -191,3 +191,8 @@ sudo snap install kitematic
 echo 'installing postman'
 sudo snap install postman
 
+echo 'installing discord'
+sudo snap install discord
+
+echo 'installing zeplin-lukewh'
+sudo snap install zeplin-lukewh
